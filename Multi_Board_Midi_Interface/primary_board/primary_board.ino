@@ -73,6 +73,21 @@ bool isNewTouch[totalNumElectrodes];
 bool isNewRelease[totalNumElectrodes];
 int numTouches = 0;
 
+// array of MIDI numbers to note equivalents
+// max number of notes is 84 b/c of limit of 7 daisy chained boards w/ 12 notes each
+// using C4 instead of C3 as "middle C" to accomodate 7 scales
+String noteMap[84] = {
+  
+  "B4","A#/Bb4","A4","G#/Ab4","G4","F#/Gb4","F4","E4","D#/Eb4","D4","C#/Db4","C4",
+  "B3","A#/Bb3","A3","G#/Ab3","G3","F#/Gb3","F3","E3","D#/Eb3","D3","C#/Db3","C3",
+  "B2","A#/Bb2","A2","G#/Ab2","G2","F#/Gb2","F2","E2","D#/Eb2","D2","C#/Db2","C2",
+  "B1","A#/Bb1","A1","G#/Ab1","G1","F#/Gb1","F1","E1","D#/Eb1","D1","C#/Db1","C1",
+  "B0","A#/Bb0","A0","G#/Ab0","G0","F#/Gb0","F0","E0","D#/Eb0","D0","C#/Db0","C0",
+  "B-1","A#/Bb-1","A-1","G#/Ab-1","G-1","F#/Gb-1","F-1","E-1","D#/Eb-1","D-1","C#/Db-1","C-1",
+  "B-2","A#/Bb-2","A-2","G#/Ab-2","G-2","F#/Gb-2","F-2","E-2","D#/Eb-2","D-2","C#/Db-2","C-2"
+    
+  };
+
 void setup(){  
   Serial.begin(57600);
 
@@ -206,13 +221,17 @@ void processTouchInputs(){
         //pin i was just touched
         Serial.print("pin ");
         Serial.print(i);
-        Serial.println(" was just touched");
+        Serial.print(" was just touched... MIDI note ");
+        Serial.print(noteMap[i]);
+        Serial.println(" on...");
         digitalWrite(LED_BUILTIN, HIGH);
-        e.m1 = 0x90;    
+        e.m1 = 0x90;  
       } else if(isNewRelease[i]){
           Serial.print("pin ");
           Serial.print(i);
-          Serial.println(" is no longer being touched");
+          Serial.print(" is no longer being touched... MIDI note ");
+          Serial.print(noteMap[i]);
+          Serial.println(" off...");
           digitalWrite(LED_BUILTIN, LOW);
           e.m1 = 0x80;
        } else {
